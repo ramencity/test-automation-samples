@@ -1,3 +1,4 @@
+require 'fileutils'
 require 'sys/proctable'
 
 SOURCE_CODE_DIR = File.join(ENV['HOME'], 'go', 'src', 'github.com')
