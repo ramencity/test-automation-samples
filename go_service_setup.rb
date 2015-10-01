@@ -15,9 +15,9 @@ def copy_project_env_config(service)
   end
 end
 
-# if the monsoonWireFormat directory doesn't exist or if it is empty, grab the C proto template from the submodule
+# if the myWireFormat directory doesn't exist or if it is empty, grab the C proto template from the submodule
 # @param directory [String] where the protoc file lives
-def check_protoc(directory='./monsoonWireFormat')
+def check_protoc(directory='./myWireFormat')
   if !Dir.exist?(directory) || (Dir.entries(directory) - %w{ . ..  }).empty?
     system "git submodule update --init --recursive"
   end
@@ -26,11 +26,11 @@ end
 # checks that the protoc file and the Go-compiled protobuf file exist, and the Go protobuf is more recent than the protoc template
 # If the protoc template has been updated since last compilation, recompile to Go
 def check_go_protobuf
-  protofile = File.join('.', 'monsoonWireFormat', 'monsoon_wire_format.proto')
-  gofile = File.join('.', 'monsoonWireFormat', 'monsoon_wire_format.pb.go')
+  protofile = File.join('.', 'myWireFormat', 'my_wire_format.proto')
+  gofile = File.join('.', 'myWireFormat', 'my_wire_format.pb.go')
 
   unless File.exists?(gofile) && File.mtime(gofile) > File.mtime(protofile)
-    system 'protoc --go_out=. ./monsoonWireFormat/*.proto'
+    system 'protoc --go_out=. ./myWireFormat/*.proto'
   end
 end
 
@@ -40,12 +40,12 @@ def compile_ruby_protobuf_template(service)
   cuke_home = Dir.pwd
   case service
     when 'go-cart-tests'
-      protoc_dir = './monsoonWireFormat'
+      protoc_dir = './myWireFormat'
     else
-      protoc_dir = '../../monsoonWireFormat'
+      protoc_dir = '../../myWireFormat'
   end
 
-  file = File.join(protoc_dir, 'monsoon_wire_format.rb')
+  file = File.join(protoc_dir, 'my_wire_format.rb')
   #delete old copy if it's there:
   if File.exist?(file)
     File.delete(file)
@@ -53,10 +53,10 @@ def compile_ruby_protobuf_template(service)
 
   #change working directory and recreate the ruby protobuf from the protoc template:
   Dir.chdir(protoc_dir)
-  template = './monsoon_wire_format.proto'
+  template = './my_wire_format.proto'
   system "protoc --ruby_out=. #{template}"  # <-- syntax for google-protobuf gem
   Dir.chdir(cuke_home)
-  require File.join(protoc_dir, 'monsoon_wire_format.rb')
+  require File.join(protoc_dir, 'my_wire_format.rb')
 end
 
 # find which git branch your service is currently on
